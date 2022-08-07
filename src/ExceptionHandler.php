@@ -37,7 +37,7 @@ class ExceptionHandler
         private array $runBeforeCallback = [],
         private array $runAfterCallback = []
     ) {
-        if ($callback && !is_callable($callback)) {
+        if (!is_callable($callback)) {
             throw new NotCallableException();
         }
 

@@ -43,7 +43,7 @@ class ExceptionHandler
 
         $methodNames = array_merge($runBeforeCallback, $runAfterCallback);
 
-        if (array_filter($methodNames, fn ($method) => (!is_string($method) || $method = ''))) {
+        if (array_filter($methodNames, fn ($method) => (!is_string($method) || $method === ''))) {
             throw new WrongMethodNameException();
         }
 

@@ -17,8 +17,9 @@ Biblioteca PHP para manejar excepciones.
 
 - [Instalación](#instalación)
 - [Requisitos](#requisitos)
-- [Cómo empezar y ejemplos](#cómo-empezar-y-ejemplos)
-- [Métodos disponibles](#métodos-disponibles)
+- [Clases disponibles](#clases-disponibles)
+  - [Clase ExceptionHandler](#clase-exceptionhandler)
+- [Excepciones utilizadas](#excepciones-utilizadas)
 - [Uso](#uso)
 - [Tests](#tests)
 - [Tareas pendientes](#tareas-pendientes)
@@ -56,13 +57,29 @@ También puedes **clonar el repositorio** completo con Git:
 git clone https://github.com/josantonius/php-exception-handler.git
 ```
 
-## Métodos disponibles
+## Clases disponibles
 
-Métodos disponibles en esta biblioteca:
-
-### Establece un manejador de excepciones
+### Clase ExceptionHandler
 
 ```php
+use Josantonius\ExceptionHandler\ExceptionHandler;
+```
+
+Establece un manejador de excepciones:
+
+```php
+/**
+ * Sets a exception handler.
+ *
+ * @param callable $callback          Función para manejo de excepciones.
+ * @param array    $runBeforeCallback Métodos a llamar en la excepción antes del callback.
+ * @param array    $runAfterCallback  Métodos a llamar en la excepción después del callback.
+ * 
+ * @throws NotCallableException     si la llamada de retorno no es de tipo callable.
+ * @throws WrongMethodNameException si el nombre del método no es string o está vacío.
+ * 
+ * @see https://www.php.net/manual/en/functions.first_class_callable_syntax.php
+ */
 new ExceptionHandler(
     callable $callback,
     string[] $runBeforeCallback = [],
@@ -70,29 +87,14 @@ new ExceptionHandler(
 );
 ```
 
-**@param** callable `$callback` Función para manejo de excepciones.
-
-**@param** array `$runBeforeCallback` Nombres de métodos a llamar en la excepción antes de
-ejecutar el *callback*.
-
-**@param** array `$runAfterCallback` Nombres de métodos a llamar en la excepción después de
-ejecutar el *callback*.
-
-**@throws** `NotCallableException` si la llamada de retorno no es de tipo *callable*.
-
-**@throws** `WrongMethodNameException` si el nombre del método no es *string*.
-
-@see <https://www.php.net/manual/en/functions.first_class_callable_syntax.php> para más información
-sobre la sintaxis de las llamadas de primera clase.
-
-## Cómo empezar
-
-Para utilizar esta biblioteca:
+## Excepciones utilizadas
 
 ```php
-use Josantonius\ExceptionHandler\ExceptionHandler;
+use Josantonius\ExceptionHandler\Exceptions\NotCallableException;
+```
 
-new ExceptionHandler(/*...*/);
+```php
+use Josantonius\ExceptionHandler\Exceptions\WrongMethodNameException;
 ```
 
 ## Uso
@@ -102,29 +104,31 @@ Ejemplo de uso para esta biblioteca:
 ### Establece un manejador de excepciones básico
 
 ```php
-function handler(Throwable $exception) { /* hacer algo */ }
-```
+use Josantonius\ExceptionHandler\ExceptionHandler;
 
-```php
+function handler(\Throwable $exception) { /* hacer algo */ }
+
 new ExceptionHandler(
     callback: handler(...)
 );
+
+/**
+ * Si se lanza una excepción, se ejecuta lo siguiente:
+ *
+ * handler($exception)
+ */
 ```
-
-Si se lanza una excepción:
-
-- `handler($exception)` *callback* será ejecutado
 
 ### Establece los métodos a llamar antes de ejecutar el *callback*
 
 ```php
+use Josantonius\ExceptionHandler\ExceptionHandler;
+
 class FooException extends \Exception
 {
     public function context(): void { /* hacer algo */ }
 }
-```
 
-```php
 class Handler {
     public function exceptions(Throwable $exception): void
     {
@@ -133,32 +137,32 @@ class Handler {
         }
     }
 }
-```
 
-```php
 new ExceptionHandler(
     callback: (new Handler())->exceptions(...),
     runBeforeCallback: ['context']
 );
+
+/**
+ * Si se lanza FooException(), se ejecuta lo siguiente:
+ * 
+ * FooException->context()
+ * Handler->exceptions($exception)
+ */
 ```
 
-Si se lanza `FooException()`:
-
-- `FooException->context()` será llamado
-- `Handler->exceptions($exception)` *callback* será ejecutado
-
-### Sets methods to execute after calling the callback
+### Establece los métodos a ejecutar después de llamar al *callback*
 
 ```php
+use Josantonius\ExceptionHandler\ExceptionHandler;
+
 class FooException extends \Exception
 {
     public function report(): void { /* hacer algo */ }
 
     public function render(): void { /* hacer algo */ }
 }
-```
 
-```php
 class Handler {
     public static function exceptions(Throwable $exception): void
     {
@@ -167,53 +171,54 @@ class Handler {
         }
     }
 }
-```
 
-```php
 new ExceptionHandler(
     callback: Handler::exceptions(...),
     runAfterCallback: ['report', 'render']
 );
+
+/**
+ * Si se lanza FooException(), se ejecuta lo siguiente:
+ * 
+ * Handler::exceptions($exception)
+ * FooException->report()
+ * FooException->render()
+ */
 ```
-
-Si se lanza `FooException()`:
-
-- `Handler::exceptions($exception)` *callback* será ejecutado
-- `FooException->report()` será llamado
-- `FooException->render()` será llamado
 
 ### Sets methods to execute before and after calling the callback
 
 ```php
+use Josantonius\ExceptionHandler\ExceptionHandler;
+
 class FooException extends \Exception
 {
-    public function context(): void { /* hacer algo */ }
+    public function context(): void { /* do something */ }
 
-    public function report(): void { /* hacer algo */ }
+    public function report(): void { /* do something */ }
 
-    public function render(): void { /* hacer algo */ }
+    public function render(): void { /* do something */ }
 }
-```
 
-```php
-function exceptionHandler(Throwable $exception) { /* hacer algo */ }
-```
+function exceptionHandler(Throwable $exception) { /* do something */ }
 
-```php
 new ExceptionHandler(
     callback: exceptionHandler(...),
     runBeforeCallback: ['context', 'logger'],
     runAfterCallback: ['report', 'render']
 );
+
+/**
+ * If FooException() is thrown, the following is executed:
+ * 
+ * FooException->context()
+ * exceptionHandler($exception)
+ * FooException->report()
+ * FooException->render()
+ * 
+ * Se ignora FooException->logger(), no existe en la excepción.
+ */
 ```
-
-Si se lanza `FooException()`:
-
-- `FooException->context()` será llamado
-- `FooException->logger()` será ignorado, no existe en la excepción
-- `exceptionHandler($exception)` *callback* será ejecutado
-- `FooException->report()` será llamado
-- `FooException->render()` será llamado
 
 ## Tests
 

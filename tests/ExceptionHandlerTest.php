@@ -1,13 +1,15 @@
 <?php
 
 /*
-* This file is part of https://github.com/josantonius/php-exception-handler repository.
-*
-* (c) Josantonius <hello@josantonius.dev>
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of https://github.com/josantonius/php-exception-handler repository.
+ *
+ * (c) Josantonius <hello@josantonius.dev>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+ */
 
 namespace Josantonius\ErrorHandler\Tests;
 
@@ -31,14 +33,14 @@ class ExceptionHandlerTest extends TestCase
         $this->handler = new Handler();
     }
 
-    public function testShouldFailIfCallableCallbackIsNotPassed(): void
+    public function test_should_fail_if_callable_callback_is_not_passed(): void
     {
         $this->expectException(NotCallableException::class);
 
         new ExceptionHandler(callback: 'foo');
     }
 
-    public function testShouldFailIfTheMethodNamesNotContainValidDataType(): void
+    public function test_should_fail_if_the_method_names_not_contain_valid_data_type(): void
     {
         $this->expectException(WrongMethodNameException::class);
 
@@ -48,7 +50,7 @@ class ExceptionHandlerTest extends TestCase
         );
     }
 
-    public function testShouldSetTheHandlerOnlyWithTheCallback(): void
+    public function test_should_set_the_handler_only_with_the_callback(): void
     {
         $this->assertInstanceOf(
             ExceptionHandler::class,
@@ -56,7 +58,7 @@ class ExceptionHandlerTest extends TestCase
         );
     }
 
-    public function testShouldSetTheHandlerOnlyWithCallsToRunBefore(): void
+    public function test_should_set_the_handler_only_with_calls_to_run_before(): void
     {
         $this->assertInstanceOf(
             ExceptionHandler::class,
@@ -67,7 +69,7 @@ class ExceptionHandlerTest extends TestCase
         );
     }
 
-    public function testShouldSetTheHandlerOnlyWithCallsToAfter(): void
+    public function test_should_set_the_handler_only_with_calls_to_after(): void
     {
         $this->assertInstanceOf(
             ExceptionHandler::class,
@@ -78,7 +80,7 @@ class ExceptionHandlerTest extends TestCase
         );
     }
 
-    public function testShouldCallTheCallbackWhenAnExceptionIsThrow(): void
+    public function test_should_call_the_callback_when_an_exception_is_throw(): void
     {
         $exceptionHandler = new ExceptionHandler(callback: $this->handler->init(...));
 
@@ -94,7 +96,7 @@ class ExceptionHandlerTest extends TestCase
         $this->assertEquals('init', History::get(0)->methodName);
     }
 
-    public function testShouldCallTheCallbackBeforeRunMethodsWhenAnExceptionIsThrow(): void
+    public function test_should_call_the_callback_before_run_methods_when_exception_is_throw(): void
     {
         $exceptionHandler = new ExceptionHandler(
             callback: $this->handler->init(...),
@@ -113,7 +115,7 @@ class ExceptionHandlerTest extends TestCase
         $this->assertEquals('context', History::get(0)->methodName);
     }
 
-    public function testShouldCallTheCallbackAfterRunMethodsWhenAnExceptionIsThrow(): void
+    public function test_should_call_the_callback_after_run_methods_when_exception_is_throw(): void
     {
         $exceptionHandler = new ExceptionHandler(
             callback: $this->handler->init(...),
@@ -134,7 +136,7 @@ class ExceptionHandlerTest extends TestCase
         $this->assertEquals('render', History::get(2)->methodName);
     }
 
-    public function testShouldCallTheCallbackAfterAndBeforeRunMethodsWhenAnExceptionIsThrow(): void
+    public function test_should_call_callback_and_all_methods_when_an_exception_is_throw(): void
     {
         $exceptionHandler = new ExceptionHandler(
             callback: $this->handler->init(...),

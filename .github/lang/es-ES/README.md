@@ -61,9 +61,7 @@ git clone https://github.com/josantonius/php-exception-handler.git
 
 ### Clase ExceptionHandler
 
-```php
-use Josantonius\ExceptionHandler\ExceptionHandler;
-```
+`Josantonius\ExceptionHandler\ExceptionHandler`
 
 Establece un manejador de excepciones:
 
@@ -71,19 +69,19 @@ Establece un manejador de excepciones:
 /**
  * Sets a exception handler.
  *
- * @param callable $callback          Función para manejo de excepciones.
- * @param array    $runBeforeCallback Métodos a llamar en la excepción antes del callback.
- * @param array    $runAfterCallback  Métodos a llamar en la excepción después del callback.
+ * @param callable $callback          Exception handler function.
+ * @param string[] $runBeforeCallback Method names to call in the exception before run callback.
+ * @param string[] $runAfterCallback  Method names to call in the exception after run callback.
  * 
- * @throws NotCallableException     si la llamada de retorno no es de tipo callable.
- * @throws WrongMethodNameException si el nombre del método no es string o está vacío.
+ * @throws NotCallableException     if the callback is not callable.
+ * @throws WrongMethodNameException if the method names are not string or are empty.
  * 
  * @see https://www.php.net/manual/en/functions.first_class_callable_syntax.php
  */
-new ExceptionHandler(
-    callable $callback,
-    string[] $runBeforeCallback = [],
-    string[] $runAfterCallback = []
+public function __construct(
+    private callable $callback,
+    private array $runBeforeCallback = [],
+    private array $runAfterCallback = []
 );
 ```
 
@@ -91,9 +89,6 @@ new ExceptionHandler(
 
 ```php
 use Josantonius\ExceptionHandler\Exceptions\NotCallableException;
-```
-
-```php
 use Josantonius\ExceptionHandler\Exceptions\WrongMethodNameException;
 ```
 

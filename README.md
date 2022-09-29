@@ -25,14 +25,16 @@ PHP library for handling exceptions.
 - [TODO](#todo)
 - [Changelog](#changelog)
 - [Contribution](#contribution)
-- [Sponsor](#Sponsor)
+- [Sponsor](#sponsor)
 - [License](#license)
 
 ---
 
 ## Requirements
 
-This library is compatible with the PHP versions: 8.1.
+- Operating System: Linux | Windows.
+
+- PHP versions: 8.1 | 8.2.
 
 ## Installation
 
@@ -61,9 +63,7 @@ git clone https://github.com/josantonius/php-exception-handler.git
 
 ### ExceptionHandler Class
 
-```php
-use Josantonius\ExceptionHandler\ExceptionHandler;
-```
+`Josantonius\ExceptionHandler\ExceptionHandler`
 
 Sets a exception handler:
 
@@ -72,18 +72,18 @@ Sets a exception handler:
  * Sets a exception handler.
  *
  * @param callable $callback          Exception handler function.
- * @param array    $runBeforeCallback Method names to call in the exception before run callback.
- * @param array    $runAfterCallback  Method names to call in the exception after run callback.
+ * @param string[] $runBeforeCallback Method names to call in the exception before run callback.
+ * @param string[] $runAfterCallback  Method names to call in the exception after run callback.
  * 
  * @throws NotCallableException     if the callback is not callable.
  * @throws WrongMethodNameException if the method names are not string or are empty.
  * 
  * @see https://www.php.net/manual/en/functions.first_class_callable_syntax.php
  */
-new ExceptionHandler(
-    callable $callback,
-    string[] $runBeforeCallback = [],
-    string[] $runAfterCallback = []
+public function __construct(
+    private callable $callback,
+    private array $runBeforeCallback = [],
+    private array $runAfterCallback = []
 );
 ```
 
@@ -91,9 +91,6 @@ new ExceptionHandler(
 
 ```php
 use Josantonius\ExceptionHandler\Exceptions\NotCallableException;
-```
-
-```php
 use Josantonius\ExceptionHandler\Exceptions\WrongMethodNameException;
 ```
 
